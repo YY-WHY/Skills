@@ -1,9 +1,9 @@
 ---
-name: di-edu-functional-specification
+name: product-functional-specification
 description: Apply the Di-Edu v1.1 product contract when explaining, designing, reviewing, or updating Di-Edu portal modules, permissions, Console and Backend capabilities, workflows, data boundaries, and AI-native behavior. Use only for Di-Edu product work, not for unrelated education products or generic UI design.
 ---
 
-# Di-Edu Functional Specification
+# Product Functional Specification
 
 Use this Skill to keep Di-Edu product decisions consistent with the approved Functional Specification while allowing the user to revise that baseline explicitly.
 

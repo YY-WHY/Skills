@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Functional Specification"
+  short_description: "Apply the Di-Edu product contract consistently"
+  default_prompt: "Use $product-functional-specification to review this Di-Edu requirement against the v1.1 product contract."
