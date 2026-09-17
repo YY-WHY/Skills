@@ -1,23 +1,23 @@
 ---
 name: product-functional-specification
-description: Apply the Di-Edu v1.1 product contract when explaining, designing, reviewing, or updating Di-Edu portal modules, permissions, Console and Backend capabilities, workflows, data boundaries, and AI-native behavior. Use only for Di-Edu product work, not for unrelated education products or generic UI design.
+description: Apply the Di-Edu MVP V2.0 product contract when explaining, designing, reviewing, or updating Di-Edu workspaces, roles, permissions, workflows, data boundaries, Console and Backend capabilities, and AI-native behavior. Use only for Di-Edu product work, not for unrelated education products or generic UI design.
 ---
 
 # Product Functional Specification
 
-Use this Skill to keep Di-Edu product decisions consistent with the approved Functional Specification while allowing the user to revise that baseline explicitly.
+Use this Skill to keep Di-Edu MVP product decisions consistent with the approved V2.0 Functional Specification while allowing the user to revise that baseline explicitly.
 
 ## Authoritative reference
 
-The product baseline is [references/Di-Edu-Functional-Specification-Role-Modules-v1.1.md](references/Di-Edu-Functional-Specification-Role-Modules-v1.1.md).
+The current product baseline is [references/Di-Edu-Functional-Specification-V2.0-Four-Zone.md](references/Di-Edu-Functional-Specification-V2.0-Four-Zone.md). The bundled V1.1 role-module document remains a historical compatibility reference.
 
-- For any Di-Edu task, first read `0 共同原则` and `功能结构总览`.
+- For any Di-Edu task, first read `文档定位`, `共同原则`, `功能结构总览`, `核心业务对象`, and `角色层次与用户范围`.
 - For a request limited to one portal, role, module, Console area, or Backend capability, also read the matching section before answering or editing.
-- For cross-role design, permission changes, topology changes, or a full-document audit, read the complete reference.
-- Treat the reference as the current product baseline. A direct user decision may revise it; identify the affected rules and downstream sections instead of silently forcing the old wording.
-- Preserve the reference snapshot unless the user explicitly asks to update the Skill baseline. Create a new versioned reference when a revision changes product meaning.
+- For cross-role design, four-zone topology changes, permission changes, MVP scope changes, or a full-document audit, read the complete V2.0 reference.
+- Treat V2.0 as the current MVP product baseline. A direct user decision may revise it; identify the affected rules, role views, coverage matrix, unresolved requirements, and downstream sections instead of silently forcing the old wording.
+- Preserve the V1.1 reference as historical evidence. Create a new versioned reference when a later revision changes product meaning; do not overwrite an earlier baseline without explicit instruction.
 
-The bundled reference is an exact copy of `Di-Edu-Functional-Specification-Role-Modules-v1.1.md`, SHA-256 `c53fc84779096452bc7b6527bbd0784025914003a22d740c252d0d5f95fd571f`.
+The bundled V2.0 reference is an exact copy of the Di-Edu MVP V2.0 source document, SHA-256 `fe7e4a63393e7490abddbe2788b124424219b72a21ca948fc745b661c537cc25`.
 
 ## Select the working mode
 
@@ -33,9 +33,12 @@ Choose the smallest mode that satisfies the request:
 Apply these rules whenever relevant:
 
 - Portal identity, position, system role, and organizational affiliation are separate dimensions.
-- Student, parent, and Staff portals remain independent. Staff job views share one Staff Portal and vary by effective position and affiliation.
-- Class, Team/Club, Department, grade, and Campus relationships determine both visibility and executable scope. One person may hold several active relationships.
-- System roles govern Console administration. They do not replace portal positions or real organizational relationships.
+- The four primary work zones are `今日动态`, `我的任务`, `沟通协作`, and `我的集体`; they are work views over shared business objects, not duplicated module databases.
+- AI助手 is a cross-zone natural-language entry point and an independent working surface. It inherits the initiating user's exact permissions and pauses at confirmation points for high-impact actions.
+- Student, parent, and Staff user subjects remain distinct. Staff work views vary by effective position and affiliation; a user may hold multiple active user subjects, positions, system roles, and organizational relationships.
+- Positions include student, teacher, supervisor, principal, and vice-principal. System or management roles include academic/school administration, administration, HR/personnel, facilities, IT, attendance, super administrator, and configurable roles. Do not conflate position with system role.
+- School, campus, stage, grade, Department, Class, course, and Team/Club relationships determine both visibility and executable scope. One person may hold several active relationships, each with effective dates and provenance.
+- System roles govern Console administration. They do not replace portal positions or real organizational relationships. IT access to runtime metadata does not imply access to sensitive student records.
 - Console is the human-facing administration and operations surface. Backend is the service and data layer that enforces identity, permission, rules, workflow, AI calls, notifications, audit, and recovery.
 - A student may be a managed record without owning a login account.
 - Permission checks happen before retrieval, comparison, export, AI processing, or write operations.
@@ -44,20 +47,24 @@ Apply these rules whenever relevant:
 - Source records, attachments, and original facts are retained before classification, generation, approval, or formal write-back. Generated conclusions cannot replace source facts.
 - Workflow steps are configurable by organization and context. Every active step has an owner, status, deadline when applicable, and result.
 - A state changes only after the corresponding business result exists. Preserve distinctions such as draft, pending confirmation, pending approval, submitted, partially completed, failed, closed, and needs resubmission.
-- The reference is a complete product capability library, not an MVP selection. Do not label functions as MVP unless the user explicitly defines the MVP scope.
+- User settings include language, time zone, date format, notification and privacy preferences, default identity or organization, AI interaction preferences, and optional WeChat account association by confirmed QR-code flow. Association and unbinding are auditable.
+- Initial development follows a microservice-oriented boundary model across identity/relationships, permissions, organization objects, teaching records, tasks/approvals, communication/notifications, files/knowledge, AI orchestration, audit, and data simulation. Deployment may temporarily combine services without collapsing ownership or authorization boundaries.
+- Reserve file-object, directory-mapping, inherited-permission, version, provenance, and write interfaces for later cloud-drive integration. MVP may simulate or defer the external service but must not block the future contract.
+- V2.0 is the MVP-stage baseline: distinguish MVP-required business verification, MVP-simulated external or AI behavior, later extensions, and unresolved rules. Complete capability coverage does not mean every external production service is live.
 
 ## Functional specification method
 
 When defining or revising a function, cover the details needed for implementation without prescribing visual layout:
 
-1. **Purpose and necessity**: what problem the function solves and why the target user needs it.
-2. **Users and scope**: eligible portal, position, system role, affiliation, and object range.
-3. **Core information or inputs**: records, files, relationships, dates, statuses, sources, and required fields.
-4. **User capabilities**: what the user can view, create, submit, approve, communicate, compare, configure, or delegate.
-5. **Outputs and state changes**: persisted results, notifications, reports, assignments, audit records, and truthful status transitions.
-6. **Business rules and exceptions**: permission checks, ownership, deadlines, conflicts, missing data, failure, partial completion, withdrawal, and recovery.
-7. **AI contribution**: retrieval, classification, drafting, suggestions, anomaly detection, workflow acceleration, source links, confirmation points, and stopping conditions.
-8. **Console and Backend support**: include these only where configuration, enforcement, integration, orchestration, audit, or operational control is required.
+1. **功能目的**: what problem the function solves and why the target user needs it.
+2. **Users and scope**: user subject, Portal/workspace, position, system role, affiliation, and object range.
+3. **核心能力**: the user-visible capabilities and supported objects.
+4. **输入与输出**: records, files, relationships, dates, statuses, sources, required fields, and produced results.
+5. **状态与规则**: truthful state transitions, ownership, deadlines, conflicts, missing data, failure, partial completion, withdrawal, recovery, and idempotent retry.
+6. **权限边界**: summary/detail/sensitive-field visibility and executable actions, including temporary authorization and audit requirements.
+7. **四区归属**: primary zone, cross-zone entry, authoritative record location, and downstream task or communication effect.
+8. **AI contribution**: retrieval, classification, drafting, suggestions, anomaly detection, workflow acceleration, source links, confirmation points, and stopping conditions.
+9. **Console and Backend support**: include configuration, enforcement, integration, orchestration, audit, recovery, and service ownership where required.
 
 Keep each section concise but complete enough that an experienced developer can identify actors, data, actions, states, permissions, failure behavior, and acceptance boundaries.
 
@@ -82,6 +89,8 @@ Before delivering substantial Di-Edu work, verify:
 - Every multi-step process has explicit ownership and truthful states.
 - Console controls and Backend enforcement are distinguished.
 - Cross-role effects, notifications, audit evidence, and failure paths form a complete loop.
-- Unaffected requirements and the reference topology remain unchanged.
+- The full V1.1 capability set is mapped to V2.0 zones or explicitly listed as unresolved; no original requirement is silently dropped.
+- MVP-required, MVP-simulated, later-extension, and unresolved items are distinguishable.
+- Unaffected requirements and the V2.0 topology remain unchanged.
 
 Do not publish, push, merge, or replace a baseline document merely because this Skill was invoked; perform external mutations only when the user requests them.
