@@ -97,6 +97,17 @@ Strategic problems or outcomes this initiative intentionally does not solve. Rel
 
 Describe the shortest end-to-end journey and its failure/recovery branches. Use Mermaid only when branching or state change is materially clearer than prose.
 
+### 9.1 IO Loop Matrix
+
+Use this hierarchy when processing differs by entry point or requested output. Read [io-loop-complexity.md](io-loop-complexity.md) before completing it.
+
+<!-- PRD-LIFECYCLE:IO-LOOP-MATRIX -->
+| Loop ID | Entry ID | Entry Point | Layer | Output | Decision Rule | Main Path | Side Effects | Evidence Class |
+|---|---|---|---|---|---|---|---|---|
+| LOOP-EP-01-L1 | EP-01 | <entry point> | L1 Immediate Result | <direct result, extraction, or stored record> | <positive routing rule based on expected output> | <input → ordered responsibilities → verified output> | <async persistence/archive/analytics or —> | `[确认/推断/建议]` |
+
+Add one detailed `LOOP-<EP>-L*` subsection for paths whose branches, verification, or recovery cannot be read safely from the matrix. Include only supported layers; do not invent L1/L2/L3 rows for symmetry. Preserve source A/B/C labels only as aliases.
+
 ## 10. Functional Requirements
 
 ### FR-CORE-001 — <Requirement name>

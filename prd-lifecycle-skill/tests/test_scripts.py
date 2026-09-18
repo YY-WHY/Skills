@@ -173,6 +173,39 @@ class SkillScriptTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("ranges", result.stdout)
 
+    def test_validator_accepts_entry_specific_io_complexity_layers(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "Loop_PRD_v0.1.0.md"
+            matrix = """\
+\n### 9.1 IO Loop Matrix
+\n<!-- PRD-LIFECYCLE:IO-LOOP-MATRIX -->
+| Loop ID | Entry ID | Entry Point | Layer | Output | Decision Rule | Main Path | Side Effects | Evidence Class |
+|---|---|---|---|---|---|---|---|---|
+| LOOP-EP-01-L1 | EP-01 | Chat | L1 Immediate Result | Direct answer | No contextual insight or artifact | Input → Route → Verify → Output | Persist interaction | `[确认]` |
+| LOOP-EP-02-L1 | EP-02 | File upload | L1 Immediate Result | Stored record | Extract and store without contextual analysis | Upload → Validate → Extract → Store → Acknowledge | Index evidence | `[确认]` |
+| LOOP-EP-02-L3 | EP-02 | File upload | L3 Orchestrated Artifact | Downloadable plan | User requests a durable multi-source plan | Upload → Structure → Plan → Generate → Verify → Output | Archive artifact | `[建议]` |
+"""
+            content = FIXTURE.read_text(encoding="utf-8").replace("\n## 10. Functional Requirements", matrix + "\n## 10. Functional Requirements")
+            path.write_text(content, encoding="utf-8")
+            result = self.run_cmd(VALIDATE, path, "--strict")
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_validator_rejects_io_loop_id_layer_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "Bad_Loop_PRD_v0.1.0.md"
+            matrix = """\
+\n### 9.1 IO Loop Matrix
+\n<!-- PRD-LIFECYCLE:IO-LOOP-MATRIX -->
+| Loop ID | Entry ID | Entry Point | Layer | Output | Decision Rule | Main Path | Side Effects | Evidence Class |
+|---|---|---|---|---|---|---|---|---|
+| LOOP-EP-01-L1 | EP-02 | File upload | L2 Contextual Insight | Insight | Compare with history | Upload → Retrieve → Analyze → Output | — | `[确认]` |
+"""
+            content = FIXTURE.read_text(encoding="utf-8").replace("\n## 10. Functional Requirements", matrix + "\n## 10. Functional Requirements")
+            path.write_text(content, encoding="utf-8")
+            result = self.run_cmd(VALIDATE, path, "--strict")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("does not match Entry ID EP-02 and layer L2", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -32,7 +32,7 @@ The skill enforces one core discipline: **never let an inference, a suggestion, 
 
 ## What it does
 
-The skill has two functions. It routes each request to one (or both, in order).
+The skill has two lifecycle functions and one document mode. It routes each request to the appropriate combination.
 
 ### 1. Normalize — build a readable living PRD
 
@@ -42,10 +42,15 @@ Takes unstructured input (meeting notes, chat logs, fragmented bullets) or a par
 - Goals, strategic non-goals, success metrics, target users, roles, and permissions.
 - **Mandatory user stories (`US-*`) and use cases (`UC-*`)** placed *before* detailed requirements, so readers understand user value first.
 - Functional requirements with explicit acceptance criteria, AI behavior, edge cases, UX states, non-functional requirements (`NFR-*`), analytics events, dependencies, rollout, and release gates.
+- Entry-specific IO loops classified by expected output complexity: `L1 Immediate Result`, `L2 Contextual Insight`, and `L3 Orchestrated Artifact`.
 - A traceability matrix linking every P0 requirement to a story/use case, acceptance criteria, analytics, and dependencies.
 - A compact **action snapshot** at the top; full delivery-tracking tables in an appendix.
 
 Every added statement is tagged by evidence class. Material unknowns become individual `Q-*` decision rows instead of guesses.
+
+### Functional Specification mode
+
+When the requested output is a Functional Specification, the skill uses a separate layout: shared principles and objects, workspace overview, role and permission model, role/workspace behavior, control surfaces, cross-role scenarios, shared states/results, and implementation/demo correspondence. It preserves the PRD as the product-intent source instead of forcing a feature specification into a metrics-first PRD structure.
 
 ### 2. Track — maintain delivery, evidence, and decisions
 
@@ -176,7 +181,7 @@ The skill delivers the versioned PRD, a classification / change summary, the lis
 | 6 | Success Metrics | 18 | Rollout |
 | 7 | Target Users, Roles, Permissions | 19 | Release Acceptance |
 | 8 | User Stories and Use Cases | 20 | Open Questions |
-| 9 | User Journey | 21 | Decision Log |
+| 9 | User Journey + IO Loop Matrix | 21 | Decision Log |
 | 10 | Functional Requirements | 22 | Traceability and Source Mapping |
 | 11 | AI Requirements | A / B | Delivery Tracker / Change History (appendices) |
 
@@ -187,6 +192,7 @@ The scripts locate tables by HTML-comment markers. **Do not edit or remove them.
 | Marker | Table |
 |---|---|
 | `<!-- PRD-LIFECYCLE:NEXT-STEPS:START -->` … `:END -->` | Current action snapshot |
+| `<!-- PRD-LIFECYCLE:IO-LOOP-MATRIX -->` | Entry-specific output-complexity loops |
 | `<!-- PRD-LIFECYCLE:DEPENDENCY-REGISTER -->` | Dependencies / risks / contradictions |
 | `<!-- PRD-LIFECYCLE:TRACEABILITY -->` | Traceability matrix |
 | `<!-- PRD-LIFECYCLE:FUNCTIONAL-PROGRESS -->` | Appendix A.1 functional delivery |
