@@ -53,6 +53,14 @@ USER_STORY_RE = re.compile(r"\bUS(?:-[A-Z0-9]+)+-\d{3}\b")
 USE_CASE_RE = re.compile(r"\bUC(?:-[A-Z0-9]+)+-\d{3}\b")
 AC_RE = re.compile(r"\bAC(?:-[A-Z0-9]+)+-\d{3}\b")
 NFR_RE = re.compile(r"\bNFR(?:-[A-Z0-9]+)*-\d{3}\b")
+IO_LOOP_MARKER = "<!-- PRD-LIFECYCLE:IO-LOOP-MATRIX -->"
+IO_LOOP_HEADERS = [
+    "Loop ID", "Entry ID", "Entry Point", "Layer", "Output", "Decision Rule",
+    "Main Path", "Side Effects", "Evidence Class",
+]
+ENTRY_ID_RE = re.compile(r"EP-\d{2,}")
+LOOP_ID_RE = re.compile(r"LOOP-(EP-\d{2,})-(L[123])")
+LAYER_RE = re.compile(r"(L[123])(?:\s+(?:Immediate Result|Contextual Insight|Orchestrated Artifact))?")
 
 
 def parse_args() -> argparse.Namespace:
@@ -209,6 +217,42 @@ def validate(path: Path) -> tuple[list[str], list[str]]:
         errors.append("At least one stable UC-* use case is required")
     if not NFR_RE.search(text):
         warnings.append("No stable NFR-* requirement found; explain why NFRs are inapplicable or add them")
+
+    if IO_LOOP_MARKER in lines:
+        try:
+            io_table = find_table(lines, IO_LOOP_MARKER, [IO_LOOP_HEADERS])
+            seen_loops: set[str] = set()
+            seen_entry_layers: set[tuple[str, str]] = set()
+            for row in io_table.rows:
+                loop_id, entry_id, _entry_name, layer, output, rule, main_path, _effects, evidence = row
+                loop_match = LOOP_ID_RE.fullmatch(loop_id)
+                if not loop_match:
+                    errors.append(f"Invalid IO Loop ID: {loop_id}")
+                    continue
+                layer_match = LAYER_RE.fullmatch(layer)
+                if not ENTRY_ID_RE.fullmatch(entry_id):
+                    errors.append(f"Invalid IO Loop entry ID: {entry_id}")
+                if not layer_match:
+                    errors.append(f"Invalid IO Loop layer: {layer}")
+                    continue
+                layer_id = layer_match.group(1)
+                if loop_match.groups() != (entry_id, layer_id):
+                    errors.append(f"{loop_id} does not match Entry ID {entry_id} and layer {layer_id}")
+                if loop_id in seen_loops:
+                    errors.append(f"Duplicate IO Loop ID: {loop_id}")
+                seen_loops.add(loop_id)
+                entry_layer = (entry_id, layer_id)
+                if entry_layer in seen_entry_layers:
+                    errors.append(f"Duplicate IO Loop classification: {entry_id} / {layer_id}")
+                seen_entry_layers.add(entry_layer)
+                if output in {"", "—", "-"} or rule in {"", "—", "-"}:
+                    errors.append(f"{loop_id} requires an output and routing-grade Decision Rule")
+                if len([node for node in re.split(r"\s*(?:→|->)\s*", main_path) if node]) < 3:
+                    errors.append(f"{loop_id} Main Path must contain at least three ordered nodes")
+                if not re.search(r"\[(?:确认|推断|建议)\]|待决策\s+Q-", evidence):
+                    errors.append(f"{loop_id} requires an evidence class")
+        except UpdateError as exc:
+            errors.append(str(exc))
 
     trace_rows: dict[str, list[str]] = {}
     try:

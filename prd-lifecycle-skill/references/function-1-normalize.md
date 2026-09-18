@@ -8,18 +8,22 @@ Choose one primary mode after reading the complete source.
 |---|---|---|
 | Unstructured material | Notes, meeting records, chats, fragmented bullets | Extract problems, users, evidence, goals, constraints, decisions, risks, and candidate behavior. Build a first draft and mark every addition by evidence class. |
 | Partial PRD | Existing requirements or headings, but missing stories, use cases, scope, permissions, failures, acceptance, metrics, or tracking | Preserve source meaning, perform a template gap analysis, and create a new version with a concise change summary. |
+| Functional Specification request | User asks for a feature specification, functional specification, FSD, role/workspace feature list, or readable developer/QA/design behavior document | Read [functional-specification.md](functional-specification.md). Establish the shared foundation first, then organize observable behavior by workspace and role. Do not silently output the PRD template. |
 
 Ask a focused question only when the answer would materially change scope or output. Otherwise create explicit `Q-*` decisions.
 
 ## Normalize in reader order
 
-Use [prd-template.md](prd-template.md) as the default order:
+Use [prd-template.md](prd-template.md) as the default order for PRDs:
 
 1. Start with document control, an executive summary, background, and a WHO/WHAT/WHEN/WHY/EVIDENCE problem statement.
 2. Separate goals, strategic non-goals, metrics, target users, roles, permissions, and release-specific out-of-scope items.
 3. Add user stories and use cases before detailed requirements so readers understand user value and behavior first.
-4. Add the core journey, functional requirements, AI behavior, edge cases, UX, NFRs, analytics, dependencies, rollout, release gates, questions, decisions, traceability, progress, and history.
-5. Keep the top action snapshot short. Put complete functional and technical progress tables in the appendix.
+4. For products with entry-dependent processing, read [io-loop-complexity.md](io-loop-complexity.md) and add the `Entry Point → Output Complexity Layer → Ordered Loop` hierarchy under the core journey.
+5. Add the core journey, functional requirements, AI behavior, edge cases, UX, NFRs, analytics, dependencies, rollout, release gates, questions, decisions, traceability, progress, and history.
+6. Keep the top action snapshot short. Put complete functional and technical progress tables in the appendix.
+
+For a Functional Specification, use the separate order in [functional-specification.md](functional-specification.md). Do not force a feature specification into a metrics-first PRD sequence.
 
 ## Evidence and status rules
 
@@ -52,6 +56,15 @@ Generate stable individual IDs:
 - Separate roles from visibility and data ownership.
 - For each P0 requirement, cover normal, validation/error, permission, duplicate/retry, and recovery behavior when applicable.
 - Add a traceability row connecting each P0 requirement to a story/use case, acceptance criteria, analytics, and dependencies.
+
+## IO Loop and output-complexity modeling
+
+- Inventory stable `EP-*` entry points before assigning complexity.
+- Classify each supported path by expected output: `L1 Immediate Result`, `L2 Contextual Insight`, or `L3 Orchestrated Artifact`.
+- Give each path a stable `LOOP-<EP>-L*` ID and expand its ordered main path separately. Do not copy the text-entry loop into file upload, forms, batch imports, or other unlike entries.
+- Use requested output as the primary decision rule. Treat source count, reasoning depth, latency, queueing, orchestration, and persistence as supporting signals.
+- Separate asynchronous persistence, archive, notification, and analytics effects from the synchronous path unless the user-visible result depends on them.
+- Carry evidence class and implementation/delivery state separately: a confirmed design loop is not a verified implementation.
 
 ## Dependency and uncertainty control
 

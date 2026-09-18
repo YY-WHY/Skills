@@ -1,4 +1,4 @@
 interface:
   display_name: "PRD Lifecycle Manager"
-  short_description: "Readable PRDs with stories, use cases, and tracking"
-  default_prompt: "Use $prd-lifecycle to create or update a readable, versioned PRD with user stories, use cases, acceptance criteria, and traceable delivery status."
+  short_description: "PRDs and role-aware functional specifications"
+  default_prompt: "Use $prd-lifecycle to create or update a readable PRD or role-aware Functional Specification with traceable behavior, workspaces, permissions, states, cross-role flows, acceptance criteria, and evidence-based delivery status."
